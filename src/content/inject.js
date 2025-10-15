@@ -9,7 +9,7 @@ async function run() {
   window.drawRects(rects);
 
   const hint = document.createElement('div');
-  hint.textContent = `Page Whiteout: найдено фрагментов — ${rects.length}. Открой popup → Экспорт PNG.`;
+hint.textContent = `Page Whiteout: found ${rects.length} fragments. Open the popup → Export PNG.`;
   Object.assign(hint.style, {
     position:'fixed', right:'12px', bottom:'12px', padding:'8px 10px',
     background:'#111', color:'#fff', fontSize:'12px', borderRadius:'6px',

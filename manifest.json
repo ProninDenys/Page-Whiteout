@@ -3,7 +3,7 @@
   "name": "Page Whiteout — Auto-redact personal data",
   "short_name": "Page Whiteout",
   "version": "0.1.0",
-  "description": "Делает скрин всей страницы и автоматически закрывает личные данные (email/телефон/IBAN/карты) белыми плашками. Экспорт PNG.",
+  "description": "Full-page screenshots with automatic white-box redaction of emails, phone numbers, IBANs, and card numbers. Export clean PNG.",
   "action": { "default_popup": "src/popup/popup.html" },
   "options_page": "src/options/options.html",
   "permissions": ["activeTab", "scripting", "storage", "downloads"],

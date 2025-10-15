@@ -5,14 +5,13 @@
   <link rel="stylesheet" href="options.css" />
 </head>
 <body>
-  <h1>Настройки Page Whiteout</h1>
-  <label><input type="checkbox" id="detectEmail" checked> Маскировать e-mail</label><br/>
-  <label><input type="checkbox" id="detectPhone" checked> Маскировать телефоны</label><br/>
-  <label><input type="checkbox" id="detectCard" checked> Маскировать номера карт</label><br/>
-  <label><input type="checkbox" id="detectIban" checked> Маскировать IBAN</label><br/>
-  <label>Отступ плашки (px): <input id="pad" type="number" value="2" min="0" max="16"></label>
-  <div style="margin-top:10px;">
-    <button id="save">Сохранить</button>
+  <h1>Page Whiteout — Options</h1>
+<label><input type="checkbox" id="detectEmail" checked> Redact e-mail</label><br/>
+<label><input type="checkbox" id="detectPhone" checked> Redact phone numbers</label><br/>
+<label><input type="checkbox" id="detectCard" checked> Redact card numbers</label><br/>
+<label><input type="checkbox" id="detectIban" checked> Redact IBAN</label><br/>
+<label>Box padding (px): <input id="pad" type="number" value="2" min="0" max="16"></label>
+<button id="save">Save</button>
   </div>
   <script src="options.js"></script>
 </body>
