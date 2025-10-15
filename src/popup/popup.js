@@ -11,3 +11,14 @@ document.getElementById('exportPdf').addEventListener('click', () => {
 document.getElementById('openOptions').addEventListener('click', () => {
   chrome.runtime.openOptionsPage();
 });
+document.getElementById('toggleDraw').addEventListener('click', () =>
+  chrome.runtime.sendMessage({ type: "TOGGLE_DRAW" })
+);
+
+document.getElementById('undo').addEventListener('click', () =>
+  chrome.runtime.sendMessage({ type: "UNDO" })
+);
+
+document.getElementById('clear').addEventListener('click', () =>
+  chrome.runtime.sendMessage({ type: "CLEAR" })
+);

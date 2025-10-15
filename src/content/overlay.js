@@ -1,15 +1,19 @@
 let overlayRoot = null;
+let ghostBox = null;
 
 window.ensureOverlay = function() {
   if (overlayRoot) return overlayRoot;
   const host = document.createElement('div');
   Object.assign(host.style, {
-    position: 'absolute', left: '0', top: '0',
-    width: '0', height: '0', zIndex: '2147483647',
+    position: 'absolute',
+    left: '0', top: '0',
+    width: '0', height: '0',
+    zIndex: '2147483647',
     pointerEvents: 'none'
   });
   document.documentElement.appendChild(host);
-  overlayRoot = host; return overlayRoot;
+  overlayRoot = host;
+  return overlayRoot;
 };
 
 window.clearOverlay = function() {
@@ -33,4 +37,27 @@ window.drawRects = function(rects) {
     frag.appendChild(el);
   });
   overlayRoot.appendChild(frag);
+};
+
+window.showGhost = function(x,y,w,h) {
+  window.ensureOverlay();
+  if (!ghostBox) {
+    ghostBox = document.createElement('div');
+    Object.assign(ghostBox.style, {
+      position:'absolute',
+      outline:'2px dashed #4A90E2',
+      background:'rgba(255,255,255,0.3)',
+      pointerEvents:'none',
+      zIndex:'2147483647'
+    });
+    overlayRoot.appendChild(ghostBox);
+  }
+  Object.assign(ghostBox.style, {
+    left:`${x}px`, top:`${y}px`, width:`${w}px`, height:`${h}px`,
+    display:'block'
+  });
+};
+
+window.hideGhost = function() {
+  if (ghostBox) ghostBox.style.display = 'none';
 };

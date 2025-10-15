@@ -1,12 +1,17 @@
-// Требует window.html2canvas (из vendor)
 async function getCfg() {
   const defaults = window.getDefaultCfg();
   return await chrome.storage.sync.get(defaults);
 }
 
+window.getAllRects = async function(cfg) {
+  const autoRects = await window.detectPIIRects(cfg);
+  const manual = (window.PW && Array.isArray(window.PW.manualRects)) ? window.PW.manualRects : [];
+  return [...autoRects, ...manual];
+};
+
 window.exportWithRedact = async function(format = 'png') {
   const cfg = await getCfg();
-  const rects = await window.detectPIIRects(cfg);
+  const rects = await window.getAllRects(cfg);
 
   const canvas = await window.html2canvas(document.documentElement, {
     windowWidth: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
@@ -22,7 +27,6 @@ window.exportWithRedact = async function(format = 'png') {
   ctx.fillStyle = '#ffffff';
   rects.forEach(r => ctx.fillRect(r.x, r.y, r.w, r.h));
 
-  // MVP: всегда PNG; PDF добавим позже
   canvas.toBlob(blob => {
     const url = URL.createObjectURL(blob);
     chrome.downloads.download({
