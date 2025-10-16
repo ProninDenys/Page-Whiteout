@@ -1,7 +1,8 @@
-const defaults = { detectEmail:true, detectPhone:true, detectCard:true, detectIban:true, pad:2 };
+const defaults = { autoRun:false, detectEmail:true, detectPhone:true, detectCard:true, detectIban:true, pad:2 };
 
 async function load() {
   const cfg = await chrome.storage.sync.get(defaults);
+  autoRun.checked   = cfg.autoRun;
   detectEmail.checked = cfg.detectEmail;
   detectPhone.checked = cfg.detectPhone;
   detectCard.checked  = cfg.detectCard;
@@ -10,6 +11,7 @@ async function load() {
 }
 save.addEventListener('click', async () => {
   const cfg = {
+    autoRun: autoRun.checked,
     detectEmail: detectEmail.checked,
     detectPhone: detectPhone.checked,
     detectCard:  detectCard.checked,

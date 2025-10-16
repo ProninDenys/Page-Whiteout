@@ -1,32 +1,37 @@
-async function forwardToContent(type, payload={}) {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (!tab?.id) return;
-  // на всякий случай убедимся, что скрипты уже инжектнуты
+async function injectAll(tabId) {
+  await chrome.scripting.executeScript({ target: { tabId }, files: ["src/vendor/html2canvas.min.js"] });
   await chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    files: ["src/vendor/html2canvas.min.js",
-            "src/content/utils.js",
-            "src/content/detector.js",
-            "src/content/overlay.js",
-            "src/content/exporter.js",
-            "src/content/inject.js"]
+    target: { tabId },
+    files: ["src/content/utils.js","src/content/detector.js","src/content/overlay.js","src/content/exporter.js","src/content/inject.js"]
   });
-  chrome.tabs.sendMessage(tab.id, { type, ...payload });
+}
+
+// сначала пытаемся послать сообщение, если некуда — инжектим и шлём ещё раз
+function sendOrInject(tabId, msg) {
+  chrome.tabs.sendMessage(tabId, msg, async () => {
+    if (chrome.runtime.lastError) {
+      await injectAll(tabId);
+      chrome.tabs.sendMessage(tabId, msg, () => {});
+    }
+  });
 }
 
 chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
-  if (msg.type === "INJECT_CLEANSHOT") {
-    const [tab] = await chrome.tabs.query({ active:true, currentWindow:true });
-    await forwardToContent("RUN_SCAN");
-    sendResponse({ ok:true });
-    return true;
-  }
-  if (msg.type === "EXPORT_IMAGE") {
-    await forwardToContent("DO_EXPORT", { format: msg.format || "png" });
-    return true;
-  }
-  if (["TOGGLE_DRAW","UNDO","CLEAR"].includes(msg.type)) {
-    await forwardToContent(msg.type);
-    return true;
+  const [tab] = await chrome.tabs.query({ active:true, currentWindow:true });
+  if (!tab?.id) return;
+
+  if (msg.type === "INJECT_CLEANSHOT") { sendOrInject(tab.id, { type:"RUN_SCAN" }); sendResponse({ok:true}); return true; }
+  if (msg.type === "EXPORT_IMAGE")    { sendOrInject(tab.id, { type:"DO_EXPORT", format: msg.format || "png" }); return true; }
+  if (["TOGGLE_DRAW","UNDO","CLEAR"].includes(msg.type)) { sendOrInject(tab.id, { type: msg.type }); return true; }
+});
+
+// авто-запуск при загрузке страницы (если включен в настройках)
+chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
+  if (changeInfo.status === 'complete') {
+    chrome.storage.sync.get({ autoRun:false }, async (cfg) => {
+      if (cfg.autoRun) {
+        try { await injectAll(tabId); } catch (e) { /* игнор внутренних страниц */ }
+      }
+    });
   }
 });

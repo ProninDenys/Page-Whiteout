@@ -52,10 +52,15 @@ window.showGhost = function(x,y,w,h) {
     });
     overlayRoot.appendChild(ghostBox);
   }
-  Object.assign(ghostBox.style, {
-    left:`${x}px`, top:`${y}px`, width:`${w}px`, height:`${h}px`,
-    display:'block'
-  });
+ Object.assign(el.style, {
+  position:'absolute',
+  left:`${r.x}px`, top:`${r.y}px`,
+  width:`${r.w}px`, height:`${r.h}px`,
+  background:'rgba(255, 230, 0, 0.35)',   // заметный жёлтый хайлайт
+  outline:'2px solid #ff3b30',            // красная рамка
+  borderRadius:'3px',
+  pointerEvents:'none'
+});
 };
 
 window.hideGhost = function() {
